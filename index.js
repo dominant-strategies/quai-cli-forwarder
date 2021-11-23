@@ -8,7 +8,7 @@ dotenv.config();
 
 import pkg from "pg";
 const { Client } = pkg;
-import { FetchBlockHeight, UpdateDatabaseHeight } from "./blocks.js";
+import { FetchBlockHeight, GetMissingBlocks } from "./blocks.js";
 import { InsertBlockTableData } from "./db.js";
 
 var names = ["prime", "region-1", "region-2", "region-3"];
@@ -105,10 +105,9 @@ async function initApp() {
     var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
     if (nodeInfo.height < currHeight) {
       var blocks = await GetMissingBlocks(nodeHost, nodeInfo, currHeight);
-      await InsertBlockTableData(client, nodeInfo, blocks);
+      InsertBlockTableData(client, nodeInfo, blocks);
     }
   }
-
   process.exit();
 }
 

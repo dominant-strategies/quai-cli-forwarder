@@ -23,11 +23,11 @@ export async function InsertBlockTableData(client, nodeInfo, blocks) {
   const insertQuery = format("INSERT INTO blocks (context , location , number , timestamp , gas_limit , gas_used , difficulty , network_difficulty , hash , header) VALUES %L ", values)
 
   try {
-    // var result= await client.query(insertQuery);
+    var result= await client.query(insertQuery);
   } catch (err){
     console.log(err)
   }
-  // console.log(result)
+  console.log(result)
 }
 
 export async function InsertTransactionsTableData(client, nodeInfo, transactions) {

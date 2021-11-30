@@ -123,7 +123,7 @@ async function initApp() {
     var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
     if (nodeInfo.height < currHeight) {
       var blocks = await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
-      // InsertBlockTableData(client, nodeInfo, blocks);
+      InsertBlockTableData(client, nodeInfo, blocks);
     }
   }
   process.exit();

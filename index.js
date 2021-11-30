@@ -42,40 +42,58 @@ var nodes = {
     height: 0,
   },
   // "zone-1-1": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-1-1",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-1-2": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-1-2",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-1-3": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-1-3",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-2-1": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-2-1",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-2-2": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-2-2",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-2-3": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-2-3",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-3-1": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-3-1",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-3-2": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-3-2",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
   // "zone-3-3": {
-  //     http: "8546",
-  //     ws: "8547",
+  //   name: "zone-3-3",
+  //   context: 2,
+  //   http: "8546",
+  //   ws: "8547",
   // },
 };
 
@@ -104,8 +122,8 @@ async function initApp() {
     var nodeInfo = nodes[names[i]];
     var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
     if (nodeInfo.height < currHeight) {
-      var blocks = await GetMissingBlocks(nodeHost, nodeInfo, currHeight);
-      InsertBlockTableData(client, nodeInfo, blocks);
+      var blocks = await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
+      // InsertBlockTableData(client, nodeInfo, blocks);
     }
   }
   process.exit();

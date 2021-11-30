@@ -1,4 +1,5 @@
 import axios from "axios";
+import { GetMissingTransactions } from "./transactions.js";
 
 export async function FetchBlockHeight(host, port) {
   try {
@@ -24,12 +25,14 @@ export async function FetchBlockHeight(host, port) {
   }
 }
 
-export async function GetMissingBlocks(host, info, currHeight) {
+export async function GetMissingBlocks(client, host, info, currHeight) {
   const dbHeight = info.height;
   const location = info.location;
   const port = info.http;
 
   var blocks = [];
+  var transactions = [];
+
   for (var i = dbHeight + 1; i < currHeight; i++) {
     var num = i.toString(16);
     try {
@@ -48,9 +51,11 @@ export async function GetMissingBlocks(host, info, currHeight) {
         }
       );
       blocks.push(response.data.result);
+      transactions.push(response.data.result.transactions)
     } catch (err) {
       console.log(err);
     }
   }
+  await GetMissingTransactions(client, info, transactions);
   return blocks;
 }

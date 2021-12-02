@@ -9,93 +9,10 @@ dotenv.config();
 import pkg from "pg";
 const { Client } = pkg;
 import { FetchBlockHeight, GetMissingBlocks } from "./blocks.js";
-import { InsertBlockTableData } from "./db.js";
+import { CreateSockets } from "./connect.js";
+import { nodes } from "./nodes.js";
 
-var names = ["prime", "region-1", "region-2", "region-3"];
-var nodes = {
-  prime: {
-    name: "prime",
-    context: 0,
-    http: "8546",
-    ws: "8547",
-    height: 0,
-  },
-  "region-1": {
-    name: "region-1",
-    context: 1,
-    http: "8578",
-    ws: "8579",
-    height: 0,
-  },
-  "region-2": {
-    name: "region-2",
-    context: 1,
-    http: "8580",
-    ws: "8581",
-    height: 0,
-  },
-  "region-3": {
-    name: "region-3",
-    context: 1,
-    http: "8674",
-    ws: "8675",
-    height: 0,
-  },
-  // "zone-1-1": {
-  //   name: "zone-1-1",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-1-2": {
-  //   name: "zone-1-2",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-1-3": {
-  //   name: "zone-1-3",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-2-1": {
-  //   name: "zone-2-1",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-2-2": {
-  //   name: "zone-2-2",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-2-3": {
-  //   name: "zone-2-3",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-3-1": {
-  //   name: "zone-3-1",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-3-2": {
-  //   name: "zone-3-2",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-  // "zone-3-3": {
-  //   name: "zone-3-3",
-  //   context: 2,
-  //   http: "8546",
-  //   ws: "8547",
-  // },
-};
+var names = ["prime", "region-1", "region-2", "region-3", "zone-1-1"];
 
 async function initApp() {
   const client = new Client();
@@ -103,7 +20,9 @@ async function initApp() {
 
   const nodeHost = process.env.NODE_HOST;
 
-  const query = "SELECT * FROM node_info ";
+  // See what latest data we have in Postgres
+  const query =
+    "SELECT DISTINCT ON (location) * from blocks ORDER BY location, timestamp DESC";
   var rows = [];
   try {
     const res = await client.query(query);
@@ -114,7 +33,11 @@ async function initApp() {
 
   for (var i = 0; i < rows.length; i++) {
     var location = rows[i].location;
-    var height = rows[i].height;
+    var height;
+    if (!rows[i].number) {
+      height = 0;
+    }
+    height = rows[i].number.split(",")[nodes[location].context];
     nodes[location].height = height;
   }
 
@@ -122,11 +45,10 @@ async function initApp() {
     var nodeInfo = nodes[names[i]];
     var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
     if (nodeInfo.height < currHeight) {
-      var blocks = await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
-      InsertBlockTableData(client, nodeInfo, blocks);
+      await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
     }
+    await CreateSockets(client, nodeHost, nodeInfo);
   }
-  process.exit();
 }
 
 initApp();

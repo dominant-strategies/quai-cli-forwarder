@@ -1,6 +1,7 @@
 import axios from "axios";
-import { GetMissingTransactions } from "./transactions.js";
+import { InsertBlockTableData } from "./db.js";
 
+// FetchBlockHeight retrieves the block height for a given node.
 export async function FetchBlockHeight(host, port) {
   try {
     let response = await axios.post(
@@ -25,37 +26,54 @@ export async function FetchBlockHeight(host, port) {
   }
 }
 
+// GetMissingBlock pushes all blocks to the database between the known height and actual height.
 export async function GetMissingBlocks(client, host, info, currHeight) {
-  const dbHeight = info.height;
-  const location = info.location;
-  const port = info.http;
-
-  var blocks = [];
-  var transactions = [];
-
-  for (var i = dbHeight + 1; i < currHeight; i++) {
-    var num = i.toString(16);
-    try {
-      let response = await axios.post(
-        "http://" + host + ":" + port,
-        {
-          jsonrpc: "2.0",
-          method: "eth_getBlockByNumber",
-          params: ["0x" + num, true],
-          id: 1,
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
-        }
-      );
-      blocks.push(response.data.result);
-      transactions.push(response.data.result.transactions)
-    } catch (err) {
-      console.log(err);
+  try {
+    var height = info.height;
+    if (info.height == undefined) {
+      height = 0;
     }
+    const dbHeight = parseInt(height);
+    const port = info.http;
+
+    var blocks = [];
+    for (var i = dbHeight + 1; i < currHeight; i++) {
+      var num = i.toString(16);
+      var block = await GetBlockByNumber(host, port, num);
+      blocks.push(block);
+      if (blocks.length > 100) {
+        console.log("Inserting batch of 100 blocks");
+        await InsertBlockTableData(client, info, blocks);
+        blocks = [];
+      }
+    }
+    if (blocks.length > 0) {
+      await InsertBlockTableData(client, info, blocks);
+    }
+  } catch (err) {
+    console.log(err);
   }
-  await GetMissingTransactions(client, info, transactions);
-  return blocks;
+}
+
+// GetBlockByNumber retrieves the block by a number from a given host and port.
+export async function GetBlockByNumber(host, port, num) {
+  try {
+    var response = await axios.post(
+      "http://" + host + ":" + port,
+      {
+        jsonrpc: "2.0",
+        method: "eth_getBlockByNumber",
+        params: ["0x" + num, true],
+        id: 1,
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
+    return response.data.result;
+  } catch (err) {
+    return err;
+  }
 }

@@ -32,8 +32,30 @@ export async function InsertBlockTableData(client, nodeInfo, blocks) {
   }
 }
 
-export async function InsertTransactionsTableData(
-  client,
-  nodeInfo,
-  transactions
-) {}
+export async function InsertTransactionsTableData(client, block) {
+  const transactions = block?.transactions;
+  for (var i = 0; i < transactions; i++) {
+    var transaction = transactions[i];
+    var value = [
+      transaction.blockNumber,
+      transaction.to,
+      transaction.from,
+      block.timestamp,
+      transaction.value,
+      transaction.hash,
+      "",
+      JSON.stringify(transaction),
+    ];
+    values.push(value);
+  }
+  const insertQuery = format(
+    "INSERT INTO transactions (block_number , to , from , timestamp , value , hash , contract_code , full_transaction) VALUES %L ",
+    values
+  );
+
+  try {
+    await client.query(insertQuery);
+  } catch (err) {
+    console.log(err);
+  }
+}

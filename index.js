@@ -27,6 +27,7 @@ async function initApp() {
   try {
     const res = await client.query(query);
     rows = res.rows;
+    console.log({ rows });
   } catch (err) {
     console.log(err.stack);
   }

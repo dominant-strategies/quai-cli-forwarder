@@ -1,6 +1,6 @@
 import WebSocket from "ws";
 import { GetBlockByNumber } from "./blocks.js";
-import { InsertBlockTableData } from "./db.js";
+import { InsertBlockTableData, InsertTransactionsTableData } from "./db.js";
 
 const chainSlugs = [
   "prime",
@@ -57,7 +57,12 @@ export async function CreateSockets(client, host, info) {
         console.log("latest block for", info.name, latestNumber);
 
         // Block actions
+        console.log({ host, info: info.http, formattedNum });
         var block = await GetBlockByNumber(host, info.http, formattedNum);
+
+        if (block?.transactions?.length > 0) {
+          await InsertTransactionsTableData(client, [block]);
+        }
         await InsertBlockTableData(client, info, [block]);
       }
     };
@@ -72,6 +77,7 @@ export async function CreateSockets(client, host, info) {
   };
 
   let url = "ws://" + host + ":" + info.ws;
+  console.log({ url });
   var connection = new WebSocket(url);
   handleConnection(connection, client, info);
 }

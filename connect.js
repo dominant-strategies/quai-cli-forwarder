@@ -1,6 +1,13 @@
 import WebSocket from "ws";
 import { GetBlockByNumber } from "./blocks.js";
-import { InsertBlockTableData, InsertTransactionsTableData } from "./db.js";
+import {
+  InsertBlockTableData,
+  InsertNodeTableData,
+  InsertTransactionsTableData,
+  InsertPeerTableData,
+  UpdateNodeTableData,
+  UpdatePeerTableData,
+} from "./db.js";
 
 const chainSlugs = [
   "prime",
@@ -57,13 +64,24 @@ export async function CreateSockets(client, host, info) {
         console.log("latest block for", info.name, latestNumber);
 
         // Block actions
-        console.log({ host, info: info.http, formattedNum });
+        // console.log({ host, info: info.http, formattedNum });
         var block = await GetBlockByNumber(host, info.http, formattedNum);
-
+        // console.log({ client, info, host });
+        // console.log({ block });
         if (block?.transactions?.length > 0) {
           await InsertTransactionsTableData(client, [block]);
         }
         await InsertBlockTableData(client, info, [block]);
+        const node_query = `SELECT * FROM node_info WHERE location LIKE '${info.name}'`;
+        const node_infos = await client.query(node_query);
+        if (node_infos?.rows?.length > 0)
+          await UpdateNodeTableData(client, info, block?.hash);
+        else await InsertNodeTableData(client, info, host, block?.hash);
+        const peer_query = `SELECT * FROM peer_info WHERE location LIKE '${info.name}'`;
+        const peer_infos = await client.query(peer_query);
+        if (peer_infos?.rows?.length > 0)
+          await UpdatePeerTableData(client, info, block?.difficulty);
+        else await InsertPeerTableData(client, info, host, block?.difficulty);
       }
     };
 

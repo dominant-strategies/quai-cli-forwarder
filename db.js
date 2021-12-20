@@ -32,6 +32,72 @@ export async function InsertBlockTableData(client, nodeInfo, blocks) {
   }
 }
 
+export async function InsertNodeTableData(client, info, host, hashrate) {
+  const value = [
+    info.name,
+    parseInt(info.http),
+    parseInt(info.ws),
+    host,
+    info.name,
+    "",
+    parseInt(info.context),
+    info.height,
+    hashrate,
+  ];
+  const insertQuery = format(
+    "INSERT INTO node_info (location , http_port , ws_port , ip , name , enode , context , height, hashrate) VALUES (%L) ",
+    value
+  );
+  try {
+    await client.query(insertQuery);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function UpdateNodeTableData(client, info, hashrate) {
+  const updateQuery = format(
+    "UPDATE node_info SET height=%L, hashrate=%L WHERE location LIKE %L",
+    info.height,
+    hashrate,
+    info.name
+  );
+
+  try {
+    await client.query(updateQuery);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function InsertPeerTableData(client, info, host, difficulty) {
+  const insertQuery = `INSERT INTO peer_info VALUES ('${info.name}', ${parseInt(
+    info.http
+  )}, ${parseInt(info.ws)}, '${host}', '${info.name}', '', '', ${
+    info.context
+  }, ARRAY[${difficulty}])`;
+
+  try {
+    await client.query(insertQuery);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export async function UpdatePeerTableData(client, info, difficulty) {
+  // const updateQuery = format(
+  //   "UPDATE peer_info SET current_difficulty=%L WHERE location LIKE %L",
+  //   parseInt(difficulty),
+  //   info.name
+  // );
+  const updateQuery = `UPDATE peer_info SET current_difficulty=ARRAY[${difficulty}] WHERE location LIKE '${info.name}'`;
+  try {
+    await client.query(updateQuery);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export async function InsertTransactionsTableData(client, block) {
   const transactions = block?.transactions;
   for (var i = 0; i < transactions; i++) {

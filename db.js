@@ -1,5 +1,21 @@
 import format from "pg-format";
 
+export const SHARDED_ADDRESS = {
+  'prime' : 'Prime',
+  'region-1' : 'Cyprus',
+  'region-2' : 'Paxos',
+  'region-3' : 'Hydra',
+  'zone-1-1' : 'Cyprus One',
+  'zone-1-2' : 'Cyprus Two',
+  'zone-1-3' : 'Cyprus Three',
+  'zone-2-1' : 'Paxos One',
+  'zone-2-2' : 'Paxos Two',
+  'zone-2-3' : 'Paxos Three',
+  'zone-3-1' : 'Hydra One',
+  'zone-3-2' : 'Hydra Two',
+  'zone-3-3' : 'Hydra Three',
+}
+
 export async function InsertBlockTableData(client, nodeInfo, blocks) {
   var values = [];
   for (var i = 0; i < blocks.length; i++) {
@@ -38,9 +54,9 @@ export async function InsertNodeTableData(client, info, host, hashrate) {
     parseInt(info.http),
     parseInt(info.ws),
     host,
-    info.name,
-    "",
-    parseInt(info.context),
+    "Geth/v1.5.0-unstable/linux/go 1.6",
+    "enode://44826a5d6a55f88a18298bca4773fca5749cdc3a5c9f308aa7d810e9b31123f3e7c5fba0b1d70aac5308426f47df2a128a6747040a3815cc7dd7167d03be320d@[::]:30303",
+    info.name.split('-')[0].toUpperCase(),
     info.height,
     hashrate,
   ];
@@ -73,8 +89,8 @@ export async function UpdateNodeTableData(client, info, hashrate) {
 export async function InsertPeerTableData(client, info, host, difficulty) {
   const insertQuery = `INSERT INTO peer_info VALUES ('${info.name}', ${parseInt(
     info.http
-  )}, ${parseInt(info.ws)}, '${host}', '${info.name}', '', '', ${
-    info.context
+  )}, ${parseInt(info.ws)}, '${host}', 'Geth/v1.5.0-unstable/linux/go 1.6', 'enode://44826a5d6a55f88a18298bca4773fca5749cdc3a5c9f308aa7d810e9b31123f3e7c5fba0b1d70aac5308426f47df2a128a6747040a3815cc7dd7167d03be320d@[::]:30303', '', ${
+    info.name.split('-')[0].toUpperCase()
   }, ARRAY[${difficulty}])`;
 
   try {

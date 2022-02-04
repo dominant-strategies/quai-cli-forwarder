@@ -1,4 +1,5 @@
 import format from "pg-format";
+import { GetChainfromAddress } from "./transactions.js";
 
 export const SHARDED_ADDRESS = {
   'prime' : 'Prime',
@@ -127,11 +128,13 @@ export async function InsertTransactionsTableData(client, block) {
       transaction.hash,
       "",
       JSON.stringify(transaction),
+      await GetChainfromAddress(transaction.to),
+      await GetChainfromAddress(transaction.from),
     ];
     values.push(value);
   }
   const insertQuery = format(
-    "INSERT INTO transactions (block_number , to , from , timestamp , value , hash , contract_code , full_transaction) VALUES %L ",
+    "INSERT INTO transactions (block_number , to , from , timestamp , value , hash , contract_code , full_transaction, to_location, from_location) VALUES %L ",
     values
   );
 

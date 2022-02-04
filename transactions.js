@@ -62,8 +62,8 @@ export async function GetChainfromAddress (address){
     //Check if current address prefix is in any of the chains
     for (var name in prefix){
         if (addressprefix >= prefix[name]['low'] && addressprefix <= prefix[name]['high']){
-          console.log(name);
-          console.log("here");
+          //console.log(name);
+          //console.log("here");
           return name;
         }
     }

@@ -12,10 +12,7 @@ import { FetchBlockHeight, GetMissingBlocks } from "./blocks.js";
 import { CreateSockets } from "./connect.js";
 import { nodes } from "./nodes.js";
 
-
-
-
-var names = ["prime", "region-1", "region-2", "region-3", "zone-1-1"];
+var names = ["zone-1-1"];
 
 async function initApp() {
   const client = new Client();

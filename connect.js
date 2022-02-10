@@ -72,16 +72,16 @@ export async function CreateSockets(client, host, info) {
           await InsertTransactionsTableData(client, [block]);
         }
         await InsertBlockTableData(client, info, [block]);
-        const node_query = `SELECT * FROM node_info WHERE location LIKE '${info.name}'`;
-        const node_infos = await client.query(node_query);
-        if (node_infos?.rows?.length > 0)
-          await UpdateNodeTableData(client, info, block?.hash);
-        else await InsertNodeTableData(client, info, host, block?.hash);
-        const peer_query = `SELECT * FROM peer_info WHERE location LIKE '${info.name}'`;
-        const peer_infos = await client.query(peer_query);
-        if (peer_infos?.rows?.length > 0)
-          await UpdatePeerTableData(client, info, block?.difficulty);
-        else await InsertPeerTableData(client, info, host, block?.difficulty);
+        // const node_query = `SELECT * FROM node_info WHERE location LIKE '${info.name}'`;
+        // const node_infos = await client.query(node_query);
+        // if (node_infos?.rows?.length > 0)
+        //   await UpdateNodeTableData(client, info, block?.hash);
+        // else await InsertNodeTableData(client, info, host, block?.hash);
+        // const peer_query = `SELECT * FROM peer_info WHERE location LIKE '${info.name}'`;
+        // const peer_infos = await client.query(peer_query);
+        // if (peer_infos?.rows?.length > 0)
+        //   await UpdatePeerTableData(client, info, block?.difficulty);
+        // else await InsertPeerTableData(client, info, host, block?.difficulty);
       }
     };
 

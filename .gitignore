@@ -1,2 +1,4 @@
 node_modules
 .VScode
+launch.json
+.vscode/*

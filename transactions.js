@@ -15,22 +15,30 @@ const prefix = {
     high: 0x1d,
   },
   zone_1_2: {
+    low: 0x1e,
+    high: 0x27,
+  },
+  zone_1_3: {
+    low: 0x28,
+    high: 0x31,
+  },
+  region_2: {
     low: 0x32,
     high: 0x3b,
   },
-  zone_1_3: {
+  zone_2_1: {
     low: 0x3c,
     high: 0x45,
   },
-  zone_2_1: {
+  zone_2_2: {
     low: 0x46,
     high: 0x4f,
   },
-  zone_2_2: {
+  zone_2_3: {
     low: 0x50,
     high: 0x59,
   },
-  zone_2_3: {
+  region_3: {
     low: 0x5a,
     high: 0x63,
   },
@@ -43,7 +51,7 @@ const prefix = {
     high: 0x77,
   },
   zone_3_3: {
-    low: 0x6e,
+    low: 0x78,
     high: 0x81,
   },
 };
@@ -57,8 +65,6 @@ export async function GetChainfromAddress(address) {
       addressprefix >= prefix[name]["low"] &&
       addressprefix <= prefix[name]["high"]
     ) {
-      //console.log(name);
-      //console.log("here");
       return name;
     }
   }

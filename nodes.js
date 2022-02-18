@@ -36,7 +36,7 @@ export const nodes = {
   "zone-1-2": {
     name: "zone-1-2",
     context: 2,
-    http: "8642",
+    http: "8542",
     ws: "8643",
   },
   "zone-1-3": {

@@ -54,13 +54,13 @@ export const nodes = {
   "zone-2-2": {
     name: "zone-2-2",
     context: 2,
-    http: "8645",
-    ws: "8646",
+    http: "8644",
+    ws: "8645",
   },
   "zone-2-3": {
     name: "zone-2-3",
     context: 2,
-    http: "8676",
+    http: "8576",
     ws: "8677",
   },
   "zone-3-1": {

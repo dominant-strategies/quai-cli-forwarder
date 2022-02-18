@@ -12,7 +12,25 @@ import { FetchBlockHeight, GetMissingBlocks } from "./blocks.js";
 import { CreateSockets } from "./connect.js";
 import { nodes } from "./nodes.js";
 
-var names = ["prime", "region-1", "region-2", "region-3", "zone-1-1"];
+process.title = "quai-cli";
+
+var names = [
+  "prime",
+  "region-1",
+  "region-2",
+  "region-3",
+  "zone-1-1",
+  "zone-1-2",
+  "zone-1-3",
+  "zone-2-1",
+  "zone-2-2",
+  "zone-2-3",
+  "zone-3-1",
+  "zone-3-2",
+  "zone-3-3",
+];
+
+// var names = ["zone-1-1"];
 
 async function initApp() {
   const client = new Client();
@@ -44,10 +62,10 @@ async function initApp() {
 
   for (var i = 0; i < names.length; i++) {
     var nodeInfo = nodes[names[i]];
-    var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
-    if (nodeInfo.height < currHeight) {
-      await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
-    }
+    // var currHeight = await FetchBlockHeight(nodeHost, nodeInfo.http);
+    // if (nodeInfo.height < currHeight) {
+    //   await GetMissingBlocks(client, nodeHost, nodeInfo, currHeight);
+    // }
     await CreateSockets(client, nodeHost, nodeInfo);
   }
 }

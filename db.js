@@ -21,7 +21,6 @@ export async function InsertBlockTableData(client, nodeInfo, blocks) {
   var values = [];
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i];
-    delete block["transactions"];
     var value = [
       nodeInfo.context,
       nodeInfo.name,

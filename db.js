@@ -32,12 +32,13 @@ export async function InsertBlockTableData(client, nodeInfo, blocks) {
       block.totalDifficulty.toString(),
       block.hash,
       JSON.stringify(block),
+      block.miner
     ];
     values.push(value);
   }
 
   const insertQuery = format(
-    "INSERT INTO blocks (context , location , number , timestamp , gas_limit , gas_used , difficulty , network_difficulty , hash , header) VALUES %L ",
+    "INSERT INTO blocks (context , location , number , timestamp , gas_limit , gas_used , difficulty , network_difficulty , hash , header, miner) VALUES %L ",
     values
   );
 

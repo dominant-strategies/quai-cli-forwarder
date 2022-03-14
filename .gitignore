@@ -5,3 +5,4 @@ launch.json
 config.env
 save_pid.txt
 output.log
+/.idea/*
